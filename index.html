@@ -18,7 +18,7 @@
           <input type="text" class="form-control" placeholder="Domain name" aria-label="Domain name"
             aria-describedby="submit" autofocus>
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="submit">Serach Now</button>
+            <button class="btn btn-outline-secondary" type="submit" id="submit">Serach Now</button>
           </div>
         </div>
       </form>
@@ -38,11 +38,20 @@
   form.onsubmit = function (e) {
     e.preventDefault();
     getData(domain.value);
-
   }
+
 
   async function getData(domain) {
     try {
+
+      let dos = domain.split(".");
+      console.log(dos);
+      if (dos.length != 2) {
+        return message.innerHTML = `<p class="alert alert-warning mt-5">${domain} is <strong>not a valid domain name</strong></p>`;
+        clearMessage();
+      }
+
+
       message.innerHTML = `<p class="alert alert-success mt-5">Searching for domain</p>`;
       const res = await fetch(`https://api.sidn.nl/rest/whois?domain=${domain}`);
       const data = await res.json();
