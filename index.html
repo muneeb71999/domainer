@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain Checker</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="d-flex justify-content-center align-items-center w-100 vh-100">
+    <div class="col-md-6">
+      <h3 class="mb-3 text-center">Enter Domain Name</h3>
+      <form id="form" class="form-inline w-100">
+        <div class="input-group w-100">
+          <input type="text" class="form-control" placeholder="Domain name" aria-label="Domain name"
+            aria-describedby="submit" autofocus>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="submit">Serach Now</button>
+          </div>
+        </div>
+      </form>
+      <div id="message">
+
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  const form = document.getElementById("form");
+  const submit = document.getElementById("submit");
+  const message = document.getElementById("message");
+  const domain = document.querySelector(".form-control");
+
+  form.onsubmit = function (e) {
+    e.preventDefault();
+    getData(domain.value);
+
+  }
+
+  async function getData(domain) {
+    try {
+      message.innerHTML = `<p class="alert alert-success mt-5">Searching for domain</p>`;
+      const res = await fetch(`https://api.sidn.nl/rest/whois?domain=${domain}`);
+      const data = await res.json();
+      message.innerHTML = "";
+      message.innerHTML = getMessage(domain, data.details.state.type);
+      console.log(data);
+    } catch (e) {
+      message.innerHTML = "";
+      message.innerHTML = `<p class="alert alert-warning mt-5">${domain} is <strong>Some Error Occured while checking for domain</strong></p>`
+      console.log(e)
+    }
+
+    clearMessage();
+
+  }
+
+  function getMessage(domain, state) {
+    if (state === "FREE") {
+      return `<p class="alert alert-success mt-5">${domain} is <strong>Available</strong></p>`
+    }
+
+    if (state === "ACTIVE") {
+      return `<p class="alert alert-danger mt-5">${domain} is <strong>Alredy Registerd</strong></p>`
+    }
+  }
+
+  function clearMessage() {
+    return setTimeout(() => {
+      message.innerHTML = null;
+    }, 5000)
+  }
+
+</script>
+
+</html>
