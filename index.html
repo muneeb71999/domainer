@@ -46,17 +46,17 @@
 
       let dos = domain.split(".");
       console.log(dos);
-      if (dos.length != 2) {
+      if (dos.length < 2) {
         return message.innerHTML = `<p class="alert alert-warning mt-5">${domain} is <strong>not a valid domain name</strong></p>`;
         clearMessage();
       }
 
 
       message.innerHTML = `<p class="alert alert-success mt-5">Searching for domain</p>`;
-      const res = await fetch(`https://api.sidn.nl/rest/whois?domain=${domain}`);
+      const res = await fetch(`https://domain-availability.whoisxmlapi.com/api/v1?apiKey=at_5eKRjxvkz4mMITkCmyvAAqut5keeH&domainName=${domain}&credits=DA&outputFormat=JSON`);
       const data = await res.json();
       message.innerHTML = "";
-      message.innerHTML = getMessage(domain, data.details.state.type);
+      message.innerHTML = getMessage(domain, data.DomainInfo.domainAvailability);
       console.log(data);
     } catch (e) {
       message.innerHTML = "";
@@ -69,11 +69,11 @@
   }
 
   function getMessage(domain, state) {
-    if (state === "FREE") {
+    if (state === "AVAILABLE") {
       return `<p class="alert alert-success mt-5">${domain} is <strong>Available</strong></p>`
     }
 
-    if (state === "ACTIVE") {
+    if (state === "UNAVAILABLE") {
       return `<p class="alert alert-danger mt-5">${domain} is <strong>Alredy Registerd</strong></p>`
     }
   }
